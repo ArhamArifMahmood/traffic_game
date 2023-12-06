@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
+
 
 /*
 This class creates the game state and takes the logic of updating the game board and checking the winning condition, etc.
@@ -21,7 +23,7 @@ the state of the game, checking if the game is over, updating the player's turn,
 class GameState extends State<Game> 
 {
   // Instance variables for grid, player, and winning checker flag
-  List<List<String>> grid = List.generate(3, (_) => List.generate(4, (_) => 'off'));
+  List<List<String>> grid = List.generate(3, (_) => List.generate(4, (_) => 'Off'));
   int currentPlayer = 1;
   bool gameOver = false;
 
@@ -33,18 +35,18 @@ class GameState extends State<Game>
   void updateLight(int row, int col) 
   {
     String currentStatus = grid[row][col];
-    if (currentStatus != 'red') 
+    if (currentStatus != 'Red') 
     {
       switch (currentStatus) 
       {
-        case 'off':
-          grid[row][col] = 'green';
+        case 'Off':
+          grid[row][col] = 'Green';
           break;
-        case 'green':
-          grid[row][col] = 'yellow';
+        case 'Green':
+          grid[row][col] = 'Yellow';
           break;
-        case 'yellow':
-          grid[row][col] = 'red';
+        case 'Yellow':
+          grid[row][col] = 'Red';
           break;
         default:
           break;
@@ -119,7 +121,7 @@ void resetGame()
 {
   setState(() 
   {
-    grid = List.generate(3, (_) => List.generate(4, (_) => 'off'));
+    grid = List.generate(3, (_) => List.generate(4, (_) => 'Off'));
     currentPlayer = 1;
   });
 }
@@ -141,12 +143,12 @@ void resetGame()
 
       body: GridView.builder
       (
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount // Grid builder with spacing in the middle of each tile
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount // Grid builder with spacing in the middle of each tile
         (
           crossAxisCount: 4,
-          childAspectRatio: 1,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10, 
+          childAspectRatio: (MediaQuery.of(context).size.width / 6.15) / (MediaQuery.of(context).size.height / 5),
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 5,
         ),
         itemCount: 12,
         itemBuilder: (context, index) 
@@ -163,7 +165,7 @@ void resetGame()
               ),
               // When tile is pressed, if game is still going and tile is not red, set the state of tile which triggers 
               // color change
-              onPressed: !gameOver && grid[row][col] != 'red' ? () => setState(() 
+              onPressed: !gameOver && grid[row][col] != 'Red' ? () => setState(() 
               {
                 updateLight(row, col);
                 if (checkWin(grid[row][col])) // Check win conditions
@@ -210,7 +212,15 @@ void resetGame()
                 }
 
               }) : null,
-              child: const Text(''),
+              child: Text(
+                grid[row][col].toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.width * 0.03, // Approximates 3vw
+    ),
+              ),
             ),
           );
         },
@@ -225,11 +235,11 @@ void resetGame()
   Color getColor(String color) 
   {
     switch (color) {
-      case 'green':
+      case 'Green':
         return Colors.green;
-      case 'yellow':
+      case 'Yellow':
         return Colors.yellow;
-      case 'red':
+      case 'Red':
         return Colors.red;
       default:
         return Colors.grey;
